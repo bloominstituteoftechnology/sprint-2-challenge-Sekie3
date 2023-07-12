@@ -73,7 +73,7 @@
     // ❗ Debug properly using the Console
 
     // 👉 CHALLENGE 1
-    function profileActivation() {
+    function profileActivation(profile, reason) {
       // 🧠 profileActivation takes two arguments, profile and reason, which are an object and a string respectively
       //  The reason arg is only used -and therefore required- to deactivate profiles, not to activate them
       //  The profile arg has an `active` property holding a Boolean value
@@ -85,10 +85,32 @@
       //    * If the profile is active but it has a `reason` prop, return the string "confirm status manually"
       //    * If the profile is **missing** an `active` prop, return the string "impossible to ascertain status"
       // 🌟 HINT: to confirm the existence of a prop, check that its value is not undefined
-    }
+        if (profile.active === true && !(profile.reason !== undefined)) {
+          profile.active = false;
+          profile.reason = "because";
 
+          return profile;
+        }
+        else if (profile.active === false && (profile.reason !== undefined))  {
+          profile.active = true;
+          delete profile.reason;
+
+          return profile;
+        }
+        else if (profile.active === false && (profile.reason === undefined)) {
+          return `confirm status manually`;
+        }
+        else if (profile.active === true && (profile.reason !== undefined)) {
+          return `confirm status manually`;
+        }
+        else if (profile.active === undefined && (profile.reason === undefined)) {
+          return `impossible to ascertain status`;
+        }
+        
+      return profile;
+    }
     // 👉 CHALLENGE 2
-    function mineSweeper() {
+    function mineSweeper(grid, x, y) {
       // 🧠 mineSweeper takes a grid as its first argument, and coordinates x and y as the second and third args
       //  The grid is an array of arrays in the following format: [["🟥","🟦","🟥"],["🟦","🟥","🟥"],["🟥","🟦","🟦"]]
       //  Each subarray is a row of the grid, the first subarray being the top row:
@@ -106,10 +128,30 @@
       //    * If the player lands on blue, return the string "🟦 🥳"
       // 🧠 Edge cases:
       //    * If the x or y coordinates are under 1 or over 3, return the string "invalid coordinates"
+      
+      if ((x > 3 || x < 1) || (y > 3 || y < 1)) {
+        return `invalid coordinates`;
+      }
+      for (let i = 0; i < y; i++) {
+        let subGrid = grid[i];
+        if ((i === (y - 1))) {
+          
+          for (let j = 0; j < x; j++) {
+            if ((j === (x - 1) && subGrid[j] === "🟥")) {
+              return `🟥 💀`;
+              console.log(`${x}, ${y}`);
+            }
+            else if ((j === (x - 1) && subGrid[j] === "🟦")) {
+              return `🟦 🥳`;
+              console.log(`${x}, ${y}`);
+            }
+          }
+        }
+      }
     }
 
     // 👉 CHALLENGE 3
-    function booleanize() {
+    function booleanize(obj) {
       // 🧠 booleanize takes an object as its single argument, which can have any number of properties
       // Loop over the properties and then return the object, after applying the following transformations:
       //    * If a value is the number zero, it must be transformed into the Boolean false
@@ -118,10 +160,26 @@
       // 🧠 Edge cases:
       //    * If a property name exceeds 9 characters, return the string "shorten all prop names to 9 chars or less"
       // 🌟 HINT: careful not to perform any unintended changes on the object
+      for (let key in obj) {
+        if ((obj[key] === 0) && key.length < 10) {
+          obj[key] = false;
+        }
+        else if (obj[key] === 1 && key.length < 10) {
+          obj[key] = true;
+        }
+        else if (obj[key] === null && key.length < 10) {
+          delete obj[key];
+        }
+
+        else if (key.length > 9) {
+          return `shorten all prop names to 9 chars or less`;
+        }
+      }
+      return obj;
     }
 
     // 👉 CHALLENGE 4
-    function scrub() {
+    function scrub(text, forbidden) {
       // 🧠 scrub takes a string "text" as its first argument, and an array of forbidden words "forbidden" as its second
       // Any word in the text included in the array of forbidden words is replaced with a word of equal length but made of lowcase "x"
       // The scrubbed text is then returned from the function, as seen in the examples below
@@ -133,10 +191,29 @@
       //    scrub("aces high", ["high", "aces", "hearts"]) // returns "xxxx xxxx"
       //    scrub("", ["high", "aces""]) // returns ""
       // 🌟 HINT: useful array methods to use are `push`, `indexOf`, `split`, `join`
+      let newPhrase = text;
+      let holderPhrase = text.split(' ');
+
+      for(let i = 0; i < forbidden.length; i++) {
+        for (let j = 0; j < holderPhrase.length; j++) {
+          if (forbidden[i] === holderPhrase[j]) {
+            let wordHolder = holderPhrase[j].split('');
+            for (let l = 0; l < wordHolder.length; l++) {
+              wordHolder[l] = 'x';
+            }
+            let newWord = wordHolder.join('')
+            holderPhrase[j] = newWord
+          }
+          newPhrase = holderPhrase.join(' ')
+        }
+      }
+      
+
+      return newPhrase
     }
 
     // 👉 CHALLENGE 5
-    function normalizePhoneNumber() {
+    function normalizePhoneNumber(str) {
       // 🧠 normalizePhoneNumber takes a string as its only argument, representing a ten-digit number
       // The function returns a string formatted as seen below
       // 🧠 Examples of usage:
@@ -148,6 +225,27 @@
       // 🌟 HINT: instead of looping over the number's digits, loop backwards over a template "(XXX) XXX-XXXX"
       // 🌟 HINT: at each iteration, if the current character is an "X", replace it with the result of popping a digit from the number
       // 🌟 HINT: if you'd rather loop forwards, use `shift` instead of `pop`
+      if (str.length !== 10) {
+        return `type a 10-digit number`
+      }
+      let xArray = ['(', 'x', 'x', 'x',')', ' ', 'x', 'x', 'x', '-', 'x', 'x', 'x', 'x' ];
+
+      for (let i = 0; i < str.length; i++) {
+        for (let j = 0; j < xArray.length; j++) {
+          if (xArray[j] === 'x') {
+            xArray[j] = str.charAt(i);
+            if ((xArray[j] !== '0') && (xArray[j] !== '1') && (xArray[j] !== '2') && (xArray[j] !== '3') && (xArray[j] !== '4') &&
+            (xArray[j] !== '5') && (xArray[j] !== '6') && (xArray[j] !== '7') && (xArray[j] !== '8') && (xArray[j] !== '9')) {
+              return "invalid phone number";
+            }
+            else {
+              break;
+            }
+            }
+          }
+        }
+      let finalString = xArray.join('')
+      return finalString;
     }
 
     // 👉 CHALLENGE 6 (bonus, NOT graded)
